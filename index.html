@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docker เบื้องต้น: คู่มือฉบับรวบรัดสำหรับผู้เริ่มต้น</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'IBM Plex Sans Thai', sans-serif;
+            line-height: 1.8;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7f6;
+            color: #333;
+        }
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+            font-weight: 600;
+            margin-bottom: 25px;
+        }
+        h1 {
+            font-size: 2.8em;
+            text-align: center;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 15px;
+            margin-bottom: 40px;
+            color: #3498db;
+        }
+        h2 {
+            font-size: 2.2em;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 10px;
+            margin-top: 40px;
+        }
+        h3 {
+            font-size: 1.8em;
+            color: #2980b9;
+            margin-top: 30px;
+        }
+        p {
+            margin-bottom: 1.5em;
+        }
+        ul {
+            list-style-type: disc;
+            margin-left: 25px;
+            margin-bottom: 1.5em;
+        }
+        ul li {
+            margin-bottom: 0.8em;
+        }
+        code {
+            background-color: #e0e6ea;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+            color: #c0392b;
+        }
+        pre {
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            padding: 18px 25px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin-bottom: 1.8em;
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+        pre code {
+            background-color: transparent;
+            color: inherit;
+            padding: 0;
+        }
+        strong {
+            color: #e67e22;
+        }
+        .highlight {
+            background-color: #ecf0f1;
+            padding: 15px;
+            border-left: 5px solid #3498db;
+            margin-bottom: 2em;
+            border-radius: 8px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px solid #ecf0f1;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Docker เบื้องต้น: คู่มือฉบับรวบรัดสำหรับผู้เริ่มต้น</h1>
+
+        <p>Docker เป็นแพลตฟอร์มโอเพนซอร์สที่ช่วยให้นักพัฒนาสามารถสร้าง จัดส่ง และรันแอปพลิเคชันในรูปแบบที่เรียกว่า <strong>คอนเทนเนอร์ (Containers)</strong> คอนเทนเนอร์เหล่านี้เปรียบเสมือนกล่องที่บรรจุทุกสิ่งทุกอย่างที่แอปพลิเคชันต้องการ ไม่ว่าจะเป็นโค้ด, รันไทม์, ไลบรารี, และการตั้งค่าระบบ ทำให้แอปพลิเคชันสามารถทำงานได้อย่างสอดคล้องกันไม่ว่าจะรันอยู่บนสภาพแวดล้อมใดก็ตาม</p>
+
+        <h2>ทำไมต้องใช้ Docker?</h2>
+        <ul>
+            <li><strong>ความสอดคล้อง:</strong> ช่วยให้แอปพลิเคชันทำงานได้เหมือนกันทุกที่ ไม่ว่าจะบนเครื่องนักพัฒนา, เซิร์ฟเวอร์ทดสอบ, หรือเซิร์ฟเวอร์จริง ลดปัญหา "มันทำงานบนเครื่องผมนะ!"</li>
+            <li><strong>ความรวดเร็ว:</strong> คอนเทนเนอร์เริ่มต้นได้เร็วกว่าเครื่องเสมือน (Virtual Machines) มาก ทำให้การพัฒนาและปรับใช้แอปพลิเคชันเป็นไปอย่างรวดเร็ว</li>
+            <li><strong>ประสิทธิภาพ:</strong> ใช้ทรัพยากรน้อยกว่าเครื่องเสมือน เนื่องจากคอนเทนเนอร์ใช้เคอร์เนลของระบบปฏิบัติการร่วมกัน</li>
+            <li><strong>พกพาง่าย:</strong> สามารถย้ายคอนเทนเนอร์จากสภาพแวดล้อมหนึ่งไปยังอีกสภาพแวดล้อมหนึ่งได้อย่างง่ายดาย</li>
+            <li><strong>การจัดการที่ง่ายขึ้น:</strong> ช่วยให้การจัดการแอปพลิเคชันและบริการต่างๆ เป็นไปอย่างมีระเบียบและง่ายดายขึ้น โดยเฉพาะเมื่อทำงานกับแอปพลิเคชันที่มีส่วนประกอบหลายอย่าง (Microservices)</li>
+        </ul>
+
+        <h2>แนวคิดพื้นฐานของ Docker</h2>
+        <ul>
+            <li><strong>Image (อิมเมจ):</strong> เป็นเหมือนแม่แบบ (Template) ที่อ่านอย่างเดียว (Read-only) สำหรับสร้างคอนเทนเนอร์ อิมเมจประกอบด้วยโค้ด แอปพลิเคชัน ไลบรารี การตั้งค่า และส่วนประกอบอื่นๆ ที่จำเป็น</li>
+            <li><strong>Container (คอนเทนเนอร์):</strong> คืออินสแตนซ์ที่ทำงานอยู่ (Running instance) ของอิมเมจ คุณสามารถสร้างคอนเทนเนอร์หลายตัวจากอิมเมจเดียวกันได้</li>
+            <li><strong>Dockerfile:</strong> คือไฟล์ข้อความที่ประกอบด้วยคำสั่งสำหรับสร้าง Docker Image</li>
+            <li><strong>Docker Hub:</strong> เป็นคลังเก็บอิมเมจสาธารณะที่ใหญ่ที่สุด คล้ายกับ GitHub สำหรับโค้ด คุณสามารถอัปโหลดและดาวน์โหลดอิมเมจได้ที่นี่</li>
+        </ul>
+
+        <h2>ตัวอย่างการใช้งาน Docker เบื้องต้น</h2>
+        <p>สมมติว่าคุณต้องการรันเว็บเซิร์ฟเวอร์ Nginx ด้วย Docker:</p>
+
+        <h3>1. ติดตั้ง Docker</h3>
+        <p>ก่อนอื่น คุณต้องติดตั้ง Docker Desktop บนเครื่องของคุณ (มีให้สำหรับ Windows, macOS และ Linux)</p>
+
+        <h3>2. ดึง Docker Image</h3>
+        <p>เปิด Terminal/Command Prompt แล้วพิมพ์คำสั่ง:</p>
+        <pre><code class="language-bash">docker pull nginx</code></pre>
+        <p>คำสั่งนี้จะดาวน์โหลดอิมเมจ Nginx ล่าสุดจาก Docker Hub</p>
+
+        <h3>3. รัน Docker Container</h3>
+        <pre><code class="language-bash">docker run --name my-nginx -p 80:80 -d nginx</code></pre>
+        <ul>
+            <li><code>docker run</code>: คำสั่งสำหรับสร้างและรันคอนเทนเนอร์</li>
+            <li><code>--name my-nginx</code>: กำหนดชื่อคอนเทนเนอร์เป็น <code>my-nginx</code></li>
+            <li><code>-p 80:80</code>: เชื่อมต่อพอร์ต 80 ของเครื่องโฮสต์เข้ากับพอร์ต 80 ของคอนเทนเนอร์ (ทำให้คุณสามารถเข้าถึง Nginx ได้จาก <code>http://localhost</code>)</li>
+            <li><code>-d</code>: รันคอนเทนเนอร์ในโหมดเบื้องหลัง (Detached mode)</li>
+            <li><code>nginx</code>: ระบุอิมเมจที่จะใช้</li>
+        </ul>
+
+        <h3>4. ตรวจสอบ</h3>
+        <p>เปิดเว็บเบราว์เซอร์ของคุณแล้วไปที่ <code>http://localhost</code> คุณจะเห็นหน้าต้อนรับของ Nginx</p>
+
+        <h3>5. หยุดและลบคอนเทนเนอร์</h3>
+        <pre><code class="language-bash">docker stop my-nginx
+docker rm my-nginx</code></pre>
+
+        <div class="footer">
+            <p>&copy; 2025 ข้อมูล Docker เบื้องต้น. สงวนลิขสิทธิ์.</p>
+        </div>
+    </div>
+</body>
+</html>
